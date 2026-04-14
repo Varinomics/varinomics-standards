@@ -217,7 +217,8 @@ namespace fs = std::filesystem;
 - Function, class, and struct opening braces must go on the next line.
 - Lambda and control-statement opening braces must go on the same line when the
   condition fits on one line.
-- If a control condition wraps across lines, put the opening brace on the next line.
+- If an `if`, `for`, or `while` condition wraps across lines, put the opening
+  brace on the next line.
 - `else`, `catch`, and `while` for a `do` loop must start on their own line.
 - `else if` must be formatted as `else` followed by `if` on the next line.
 - Do not write `else if` on one physical line.

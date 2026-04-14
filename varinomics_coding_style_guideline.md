@@ -77,6 +77,13 @@ profiles.
   designs. Use polling only when there is no viable alternative.
 - Avoid hysteresis-based behavior unless simpler and more deterministic approaches
   have been exhausted.
+- Strongly discourage introducing new environment-variable dependencies for normal
+  product behavior, configuration, discovery, or control flow when a clear
+  alternative exists.
+- Prefer explicit configuration through code, arguments, config files, or other
+  local and inspectable mechanisms.
+- Use environment variables only when they are genuinely the right integration
+  boundary or when no practical alternative exists.
 
 ### 3.6 Comments and documentation
 

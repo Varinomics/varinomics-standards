@@ -180,10 +180,16 @@ constexpr float k_grid_line_half_px = 0.7f;
 - Do not use `using namespace` at file scope or class scope.
 - A `using namespace` directive may be used inside a function body when it removes
   heavy repetition and the scope remains local.
+- Namespace aliases and type aliases at file scope, namespace scope, or class
+  scope are allowed when they materially reduce repetition and improve
+  scanability.
+- Prefer a short local alias for verbose namespaces such as `std::filesystem`
+  rather than repeating the fully qualified name throughout a file.
 - Prefer explicit qualifiers or a short local namespace alias for long names.
 
 ```cpp
 namespace algo = vnm::plot::algo;
+namespace fs = std::filesystem;
 ```
 
 ### 5.5 Files and includes
@@ -214,6 +220,13 @@ namespace algo = vnm::plot::algo;
 - If a control condition wraps across lines, put the opening brace on the next line.
 - `else`, `catch`, and `while` for a `do` loop must start on their own line.
 - `else if` must be formatted as `else` followed by `if` on the next line.
+- Do not write `else if` on one physical line.
+- Do not write `} else`, `} catch`, or `} while` on one physical line.
+- A short `if` body may stay on one line when it is isolated and clearly easier to
+  scan that way.
+- Do not compress a repetitive `if`/`else` ladder into one-line bodies when the
+  result reads like a run-on chain. In that case, prefer full multi-line blocks
+  even if each body contains only one short statement.
 
 Good:
 
@@ -252,18 +265,61 @@ if (value < vmin) { vmin = value; }
 if (value > vmax) { vmax = value; }
 ```
 
-### 5.8 Wrapped parameter lists and initializer lists
+### 5.8 Wrapped parameter lists, template lists, and initializer lists
 
-- When a function signature wraps, break immediately after `(`.
-- Put one parameter on each following line.
-- Align the closing `)` with the start of the function declaration or definition.
+- When a function declaration, definition, or call wraps, the preferred form is
+  to break immediately after `(`.
+- Do not use a hanging-indent style where later parameters are lined up under the
+  first parameter or under text from the first line.
+- Wrapped parameters may stay compact on one continuation line when the types and
+  names remain easy to read.
+- If the parameter types are visually dense or hard to scan, put one parameter on
+  each following line.
+- Vertical alignment of types and names across wrapped parameter lines is allowed
+  when it materially improves scanability.
+- The closing `)` may either align with the start of the function statement or
+  stay on its own final parameter line. Use one of those two forms consistently
+  within the local block.
+- Apply the same rule to wrapped template parameter lists and template argument
+  lists.
+- If a template list wraps, the preferred form is to break immediately after
+  `<`.
+- Do not use a hanging-indent style where later template parameters or arguments
+  are lined up under the first argument or under text from the first line.
+- Wrapped template lists may stay compact on one continuation line when the
+  grouped arguments remain easy to scan.
+- If the template arguments are visually dense or semantically separate, prefer
+  one argument per line or small scannable groups per line.
+- The closing `>` may stay on the final argument line or on its own line. Use
+  one of those two forms consistently within the local block.
 - Constructor initializer lists must start after a blank line.
-- Put `:` on its own line and indent each initializer one level.
+- Put `:` on its own line, aligned with the function declaration or definition.
+- Put each initializer on its own following line, indented one level.
+- Use trailing commas at the end of initializer lines. Do not use leading commas.
 
 ```cpp
 void update_and_write(
     const std::vector<double>& values,
     const std::vector<bool>& filter = {});
+
+static std::filesystem::path resolve_font_path(
+    const font_source_t& source, const std::filesystem::path& font_root, Pdf_font font);
+
+static std::filesystem::path resolve_font_path(
+    const font_source_t& source,
+    const std::filesystem::path& font_root,
+    Pdf_font font);
+
+static std::filesystem::path resolve_font_path(
+    const font_source_t&         source,
+    const std::filesystem::path& font_root,
+    Pdf_font                     font);
+
+static std::filesystem::path resolve_font_path(
+    const font_source_t& source,
+    const std::filesystem::path& font_root,
+    Pdf_font font
+);
 
 Example(
     QObject* parent,
@@ -272,12 +328,55 @@ Example(
     QObject(parent),
     m_helper(std::move(helper))
 {}
+
+using block_t = std::variant<
+    paragraph_block_t,
+    heading_block_t,
+    list_block_t,
+    code_block_t,
+    table_block_t,
+    page_break_block_t>;
+
+using some_type = some_template_type<
+    group1_param1_t, group1_param2_t, group1_param3_t,
+    group2_param1_t, group2_param2_t, group2_param3_t>;
+
+using some_type = some_template_type<
+    group1_param1_t, group1_param2_t, group1_param3_t,
+    group2_param1_t, group2_param2_t, group2_param3_t
+>;
+```
+
+Not allowed:
+
+```cpp
+static std::filesystem::path resolve_font_path(const font_source_t& source,
+                                               const std::filesystem::path& font_root,
+                                               Pdf_font font);
+
+using block_t = std::variant<paragraph_block_t,
+                             heading_block_t,
+                             list_block_t,
+                             code_block_t,
+                             table_block_t,
+                             page_break_block_t>;
 ```
 
 ### 5.9 Control blocks and switches
 
 - Every `if`, `else`, `for`, `while`, `do`, and `catch` block must use braces.
 - `case` labels must be indented one level under `switch`.
+- This indentation rule also applies to compact one-line `case ...: return ...;`
+  and `case ...: break;` forms.
+- Do not place `case` labels flush with the `switch` body indentation.
+- For short pure dispatch switches, compact one-line `case ...: return ...;`
+  forms are preferred when the arms fit cleanly and remain easy to scan.
+- Consecutive compact `case` lines may be vertically aligned when that improves
+  scanability.
+- When consecutive compact `case ...: return ...;` lines are aligned, pad shorter
+  labels so the first token after `:` starts in the same column.
+- A short fallthrough label may remain on its own line immediately above a compact
+  `default: return ...;` when that is the clearest spelling.
 - Every `switch` must include a `default`.
 
 ```cpp
@@ -290,6 +389,64 @@ switch (style) {
     case Display_style::AREA: return area;
     case Display_style::LINE: return line;
     default:                  return line;
+}
+
+switch (level) {
+    case 1:  return body_size * 0.65;
+    case 2:  return body_size * 0.55;
+    case 3:  return body_size * 0.45;
+    case 4:  return body_size * 0.40;
+    default: return body_size * 0.35;
+}
+
+switch (style) {
+    case Inline_style::BOLD:        return Pdf_font::BOLD;
+    case Inline_style::ITALIC:      return Pdf_font::ITALIC;
+    case Inline_style::BOLD_ITALIC: return Pdf_font::BOLD_ITALIC;
+    case Inline_style::CODE:        return Pdf_font::MONO;
+    case Inline_style::NORMAL:
+    default:                        return Pdf_font::REGULAR;
+}
+```
+
+Not allowed:
+
+```cpp
+switch (style) {
+case Display_style::DOTS: return dots;
+case Display_style::AREA: return area;
+default: return line;
+}
+
+if (ready) {
+    render();
+}
+else {
+    recover();
+}
+
+if (ready) {
+    render();
+}
+else
+if (fallback) {
+    recover();
+}
+
+if ((c & 0x80) == 0x00) {
+    len = 1;
+}
+else
+if ((c & 0xE0) == 0xC0) {
+    len = 2;
+}
+else
+if ((c & 0xF0) == 0xE0) {
+    len = 3;
+}
+else
+if ((c & 0xF8) == 0xF0) {
+    len = 4;
 }
 ```
 
@@ -305,6 +462,13 @@ switch (style) {
   related lines when it makes comparison faster to read.
 - Do not apply alignment mechanically across large, unstable, or weakly related
   blocks.
+- For wrapped expression chains such as stream insertion or other repeated
+  operators, continue on the next line with a normal continuation indent by
+  default.
+- The base expression may stand on its own line only when the chain is highly
+  repetitive and the operands form a uniform vertical list.
+- Do not use deep hanging indentation that lines continuation operators up under
+  a token from the previous line.
 
 ```cpp
 void ensure_tex(GLuint& tex, int& cur_size);
@@ -315,6 +479,12 @@ const auto reason = ws->closeReason();
 
 width  = function(something_1, something_else_2);
 height = function(something_2, something_else_1);
+
+image_stream
+    << "<< /Type /XObject /Subtype /Image /Width " << image.width_px()
+    << " /Height " << image.height_px() << " /ColorSpace "
+    << (image.color_components() == 1 ? "/DeviceGray" : "/DeviceRGB")
+    << " /BitsPerComponent 8";
 ```
 
 ### 5.11 Macros

@@ -59,7 +59,7 @@ m_current_row = -1;
 m_top_row     = 0;
 ```
 
-**Cross-type groups are fine**, and the decision of whether to align them is **not about gap size - it is about whether the lines form a single coherent operation.** If a block of 3–5 lines computes one thing together - read one value, derive another from it, derive a third from both - align them even if some lines end up with 10+ characters of padding between name and `=`. If the lines just happen to be neighbors but are unrelated (configure something, read a property, declare an unrelated helper), leave them at their natural width no matter how close the types are.
+**Cross-type groups are fine**, and the decision of whether to align them is **not about gap size - it is about whether the lines form a single coherent operation.** If a block of 3-5 lines computes one thing together - read one value, derive another from it, derive a third from both - align them even if some lines end up with 10+ characters of padding between name and `=`. If the lines just happen to be neighbors but are unrelated (configure something, read a property, declare an unrelated helper), leave them at their natural width no matter how close the types are.
 
 **Do align - coherent operation with large gap:**
 
@@ -218,7 +218,7 @@ const double expected_right  = static_cast<double>(send(SCI_POINTXFROMPOSITION, 
 
 Two alignments happen together here:
 
-1. **Inside the cast brackets:** `int` is padded with three trailing spaces → `int   ` so the `>` of `static_cast<int   >` aligns with the `>` of `static_cast<double>` below it. The `double` is left at its natural width because it is the longest type in the group.
+1. **Inside the cast brackets:** `int` is padded with three trailing spaces -> `int   ` so the `>` of `static_cast<int   >` aligns with the `>` of `static_cast<double>` below it. The `double` is left at its natural width because it is the longest type in the group.
 
 2. **Inside the inner `send(...)` call:** the top row's `send(SCI_LINEFROMPOSITION, selection_start)` has no middle `0,` argument, while the two rows below have one. The top row's comma after `SCI_LINEFROMPOSITION,` is padded with six spaces so its `selection_start` argument starts in the same column as the `selection_start` in the rows below (which sits after `, 0, `). The result is that `selection_start` stacks vertically across all three rows.
 
@@ -417,7 +417,7 @@ const bool scroll_position_changed =
 
 Notice three things:
 
-1. The `const bool … =` sits alone on its own line; all the clauses are beneath it at the same indent.
+1. The `const bool ... =` sits alone on its own line; all the clauses are beneath it at the same indent.
 2. Operators (`<`, `!=`) within each clause have been padded so they form a vertical column where the clauses share shape.
 3. The trailing `||`s form a rail at the end of each line.
 
@@ -677,7 +677,7 @@ fixtures[] = {
 Two details worth noting:
 
 1. The closing `}` of the anonymous struct is on its own line, separated from the variable name `fixtures[] = {`. Writing `} fixtures[] = {` in one line is allowed in smaller tables but splits cleanly when the table is large.
-2. A blank line separates each semantic group, with a one-line `// Phase N: …` comment labelling each.
+2. A blank line separates each semantic group, with a one-line `// Phase N: ...` comment labelling each.
 
 ---
 
@@ -705,13 +705,13 @@ f.editor.send(SCI_SETINDICATORCURRENT, 1);
 f.editor.send(SCI_INDICATORFILLRANGE,  4, 6); // "around"
 ```
 
-Five lines with a shared shape (`send(SCI_FOO, …)`), so the constant name becomes column 1 of a table and the remaining arguments sit in column 2.
+Five lines with a shared shape (`send(SCI_FOO, ...)`), so the constant name becomes column 1 of a table and the remaining arguments sit in column 2.
 
 ---
 
 ## Pattern 13 - Nested point/rect constructor tables
 
-When an initializer list or function call contains several structurally-identical nested constructors (like `QPointF(…)` or `QRectF(…)` rows inside a list), align the columns of those nested constructors. Pad shorter member-access expressions with a single space to match longer ones.
+When an initializer list or function call contains several structurally-identical nested constructors (like `QPointF(...)` or `QRectF(...)` rows inside a list), align the columns of those nested constructors. Pad shorter member-access expressions with a single space to match longer ones.
 
 **Before:**
 
@@ -739,8 +739,8 @@ points.insert(
 
 Three things happen:
 
-1. The outer `.insert(…)` call is broken after `(` with one argument per line, since it now contains a multi-line initializer list.
-2. Inside each `QPointF(…)` row, the first argument column is padded so the comma after the first argument lines up across all four rows.
+1. The outer `.insert(...)` call is broken after `(` with one argument per line, since it now contains a multi-line initializer list.
+2. Inside each `QPointF(...)` row, the first argument column is padded so the comma after the first argument lines up across all four rows.
 3. The rows themselves form a readable 4-row table even though the first column has different shapes (`cx - arm`, `cx + arm`, `cx`, `cx`).
 
 Another example - a four-row `append_rect_triangles` call:
@@ -752,7 +752,7 @@ append_rect_triangles(triangles, QRectF(box.left(),          box.top(),         
 append_rect_triangles(triangles, QRectF(box.right() - pixel, box.top(),            pixel,       box.height()));
 ```
 
-Each `QRectF(…)` row has its four arguments padded so the commas form four columns. The different first-argument shapes (`box.left()` vs `box.right() - pixel`) are padded to the same width so the second column lines up.
+Each `QRectF(...)` row has its four arguments padded so the commas form four columns. The different first-argument shapes (`box.left()` vs `box.right() - pixel`) are padded to the same width so the second column lines up.
 
 **Note:** this table exceeds the normal 120-column ceiling. It is accepted because the alignment reveals a clear 4-column table of rectangle coordinates that would be lost at 120 cols. See Pattern 15 for the rules on when >120 is acceptable.
 
@@ -911,7 +911,7 @@ lines << QStringLiteral(
         .arg((i * 13) % 101);
 ```
 
-The literals are at the normal continuation indent under the opening `(`, and the `.arg(...)` chain is at +4 below that. The ugly "hanging indent under text from the first line" form (where later literals are lined up under `"Wrapped line %1…"`) is not allowed.
+The literals are at the normal continuation indent under the opening `(`, and the `.arg(...)` chain is at +4 below that. The ugly "hanging indent under text from the first line" form (where later literals are lined up under `"Wrapped line %1..."`) is not allowed.
 
 **Counter-example - if the two literals fit comfortably on one line as the joined form, prefer the joined form:**
 

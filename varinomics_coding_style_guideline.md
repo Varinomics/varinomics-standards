@@ -100,6 +100,14 @@ profiles.
 - Do not describe product-owned code or behavior as `v1`, `v2`, `legacy`,
   `old`, or similar in comments, docs, or user-facing messages unless that
   label names a real external contract, protocol version, or release boundary.
+- Do not document transient development state as product truth. Avoid prose such
+  as "currently only", "not yet implemented", "early", "basic", "temporary",
+  "full-operation backend", or "the other backends do not support this" unless
+  the statement is tied to a stable external contract, a generated capability
+  table, or a deliberately maintained support matrix. Product documentation
+  should describe the stable contract, the caller-visible behavior, and the
+  supported way to discover capabilities. Do not scatter implementation-status
+  snapshots through narrative docs.
 
 ### 3.7 Tooling and enforcement
 

@@ -6,7 +6,7 @@ This document governs what reviewers - human or LLM - must *not* flag when revie
 
 This rule applies to **elective features** - things a project chooses to do or not to do. i18n, accessibility, cross-platform portability beyond the declared target, specific architectural patterns, specific feature completeness. A project adopts these, or it doesn't; a reviewer must check which before flagging absence.
 
-The rule does **not** apply to baseline software quality. Correctness, data integrity, security hygiene, performance sanity, resource hygiene, maintainability - every project is implicitly committed to these. A reviewer never has to "check if the project signed up for correctness." Baseline-quality findings are always in scope.
+The rule does **not** apply to baseline software quality. Correctness, data integrity, security hygiene, performance sanity, resource hygiene, maintainability, documentation integrity - every project is implicitly committed to these. A reviewer never has to "check if the project signed up for correctness." Baseline-quality findings are always in scope.
 
 This distinction matters because conflating the two is dangerous. Telling a reviewer not to flag security concerns because "the project hasn't adopted security as a requirement" would be catastrophic - especially for products like financial software, where security is foundational to the domain. The rule below is about features, not about quality.
 
@@ -32,6 +32,7 @@ These are not adopted; they are assumed. Every project is committed to them by d
 - **Performance sanity.** No O(n²) where O(n) is trivial, no UI-thread blocking for seconds, no unbounded memory growth, no leaking resources. The *specific* performance targets are project-dependent, but "egregiously slow / wasteful" is never acceptable.
 - **Resource hygiene.** Files closed, handles freed, threads joined, sockets shut down, locks released.
 - **Maintainability baseline.** A new reader can understand the code in reasonable time. Names mean what they say. Structure is not actively hostile.
+- **Documentation integrity.** Public documentation describes stable contracts and caller-visible behavior instead of transient development status. Drift-prone statements such as "currently only backend X", "not yet implemented", "early", or "basic" are in scope when they are not generated from a maintained source of truth or tied to an explicit external support matrix.
 
 A reviewer flagging any of these has not overstepped scope. They may be wrong (the suspected bug may not exist), but the category is legitimate.
 
@@ -107,7 +108,7 @@ A review that observes failures but routes them anywhere other than the findings
 
 Two buckets:
 
-- **Baseline quality** (correctness, data integrity, security hygiene, performance sanity, resource hygiene, maintainability). Always in scope. Domain raises the baseline, never lowers it. A reviewer does not need to check whether the project "adopted" correctness.
+- **Baseline quality** (correctness, data integrity, security hygiene, performance sanity, resource hygiene, maintainability, documentation integrity). Always in scope. Domain raises the baseline, never lowers it. A reviewer does not need to check whether the project "adopted" correctness.
 - **Elective features** (i18n, a11y where not legally baseline, cross-platform beyond target, specific architectural patterns, specific compliance regimes, feature completeness). In scope only when adopted, by explicit statement or consistent convention. Advocacy for un-adopted electives belongs in a product discussion, not in a review.
 
 The failure mode the rule guards against is the reviewer imposing an elective that the project has chosen not to take on. It does not, and must not, protect bugs or vulnerabilities - those are baseline concerns regardless of what any document says.
